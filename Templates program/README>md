@@ -1,0 +1,148 @@
+# Templates program
+# Job.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jobs</title>
+</head>
+<body>
+
+<h2>Add Job</h2>
+
+<form method="POST">
+    <input type="text" name="title" placeholder="Job Title" required><br><br>
+
+    <input type="text" name="location" placeholder="Location" required><br><br>
+
+    <input type="text" name="deadline" placeholder="Deadline" required><br><br>
+
+    
+    <select name="electrician_id">
+        {% for e in electricians %}
+            <option value="{{ e.id }}">{{ e.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Add Job</button>
+</form>
+
+<hr>
+
+<h2>Jobs List</h2>
+
+<ul>
+    {% for j in jobs %}
+        <li>
+            {{ j.title }} - {{ j.location }} - {{ j.deadline }} 
+    
+        </li>
+
+# Electricians.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Electricians</title>
+</head>
+<body>
+
+<h1>Electrician Management</h1>
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Enter Name" required>
+    <input type="text" name="phone" placeholder="Enter Phone" required>
+    <button type="submit">Add Electrician</button>
+</form>
+
+<h2>Electricians List</h2>
+
+<ul>
+    {% for e in electricians %}
+        <li>{{ e["name"] }} - {{ e["phone"] }}</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
+
+# index.html
+<h1>Electrician Management System</h1>
+
+<a href="/electricians">Go to Electricians</a><br><br>
+<a href="/jobs">Go to jobs</a>a><br><br>
+<a href="/materials">Go to Materials</a>
+<a href="/tasks">Go to Tasks</a><br><br>
+
+# Materials.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Materials</title>
+</head>
+<body>
+
+<h2>Add Material</h2>
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Material Name" required><br><br>
+    <input type="number" name="quantity" placeholder="Quantity" required><br><br>
+
+    <button type="submit">Add Material</button>
+</form>
+
+<hr>
+
+<h2>Materials List</h2>
+
+<ul>
+    {% for m in materials %}
+        <li>{{ m.name }} - {{ m.quantity }}</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
+
+# Task.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+</head>
+<body>
+
+<h2>Add Task</h2>
+
+<form method="POST">
+    <input type="text" name="task_name" placeholder="Task Name" required><br><br>
+
+    <select name="status">
+        <option>Pending</option>
+        <option>Completed</option>
+    </select><br><br>
+
+    <select name="job_id">
+        {% for j in jobs %}
+            <option value="{{ j.id }}">{{ j.title }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Add Task</button>
+</form>
+
+<hr>
+
+<h2>Tasks List</h2>
+
+<ul>
+    {% for t in tasks %}
+        <li>{{ t.task_name }} - {{ t.status }}</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
