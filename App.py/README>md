@@ -1,0 +1,156 @@
+# Real-Time-Project--Week-03
+App.py program
+from flask import Flask, render_template, request
+import sqlite3
+
+# 🔴 CREATE APP
+app = Flask(_name_)
+
+# 🔴 DATABASE CONNECTION
+def get_db():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+# 🔴 CREATE TABLES
+def create_tables():
+    print("CREATING TABLES...")
+    conn = sqlite3.connect("database.db")
+
+    # Electricians Table
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS electricians (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        phone TEXT
+    )
+    """)
+
+    # Jobs Table
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS jobs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        location TEXT,
+        deadline TEXT,
+        electrician_id INTEGER
+    )
+    """)
+
+    # Materials Table
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS materials (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        quantity INTEGER
+    )
+    """)
+
+    #Tasks Table
+    conn.execute("""CREATE TABLE IF NOT EXISTS tasks(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_name TEXT,
+        status TEXT
+        job_id INTEGER
+    )                  
+    """)
+
+    conn.commit()
+    conn.close()
+
+# 🔴 CALL TABLE CREATION
+create_tables()
+
+# 🔴 HOME PAGE
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+# 🔴 ELECTRICIANS MODULE
+@app.route("/electricians", methods=["GET", "POST"])
+def electricians():
+    conn = get_db()
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        phone = request.form.get("phone")
+
+        conn.execute(
+            "INSERT INTO electricians (name, phone) VALUES (?, ?)",
+            (name, phone)
+        )
+        conn.commit()
+
+    data = conn.execute("SELECT * FROM electricians").fetchall()
+    conn.close()
+
+    return render_template("electricians.html", electricians=data)
+
+# 🔴 JOBS MODULE
+@app.route("/jobs", methods=["GET", "POST"])
+def jobs():
+    conn = get_db()
+
+    if request.method == "POST":
+        title = request.form.get("title")
+        location = request.form.get("location")
+        deadline = request.form.get("deadline")
+        electrician_id = request.form.get("electrician_id")
+
+        conn.execute(
+            "INSERT INTO jobs (title, location, deadline, electrician_id) VALUES (?, ?, ?, ?)",
+            (title, location, deadline, electrician_id)
+        )
+        conn.commit()
+
+    jobs = conn.execute("SELECT * FROM jobs").fetchall()
+    electricians = conn.execute("SELECT * FROM electricians").fetchall()
+
+    conn.close()
+
+    return render_template("add_job.html", jobs=jobs, electricians=electricians)
+
+# 🔴 MATERIALS MODULE
+@app.route("/materials", methods=["GET", "POST"])
+def materials():
+    conn = get_db()
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        quantity = request.form.get("quantity")
+
+        conn.execute(
+            "INSERT INTO materials (name, quantity) VALUES (?, ?)",
+            (name, quantity)
+        )
+        conn.commit()
+
+    data = conn.execute("SELECT * FROM materials").fetchall()
+    conn.close()
+
+    return render_template("materials.html", materials=data)
+# TASK MODULE
+@app.route("/tasks", methods=["GET", "POST"])
+def tasks():
+    conn = get_db()
+
+    if request.method == "POST":
+        task_name = request.form.get("task_name")
+        status = request.form.get("status")
+        job_id = request.form.get("job_id")
+
+        conn.execute(
+            "INSERT INTO tasks (task_name, status, job_id) VALUES (?, ?, ?)",
+            (task_name, status, job_id)
+        )
+        conn.commit()
+
+    tasks = conn.execute("SELECT * FROM tasks").fetchall()
+    jobs = conn.execute("SELECT * FROM jobs").fetchall()
+
+    conn.close()
+
+    return render_template("tasks.html", tasks=tasks, jobs=jobs)
+# 🔴 RUN APP
+app.run(debug=True)
+
